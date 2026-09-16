@@ -1,0 +1,116 @@
+{
+  "version": 1,
+  "projects": [
+    {
+      "id": "nigah-ai",
+      "name": "Nigah AI",
+      "pinned": true,
+      "priority": 100,
+      "indexLabel": "01 — Flagship",
+      "headerLogo": "assets/images/nigah-ai-logo.png",
+      "description": "<em>Nigah</em> is Urdu for vision. It turns a phone camera into a voice guide for blind and low vision users in Pakistan: point it at a medicine box or a banknote and it speaks the answer back in natural Urdu.",
+      "featuredLabel": "Live in production",
+      "featuredTitle": "Vision, spoken in Urdu",
+      "featuredTagline": "An accessibility assistant that turns a phone camera into a voice guide, in Urdu, for blind and low vision users across Pakistan.",
+      "featuredDescription": "Nigah identifies medicines, reads expiry dates, and recognizes every Pakistani rupee note, then speaks the result back in natural Urdu voice. A two step medicine scan, a hardened name parser with 35 passing unit tests, and a strict two outcome contract mean a user only ever hears a real result or an honest \"couldn't identify it\" — never a guess.",
+      "short": "An Urdu-voice accessibility assistant that turns a phone camera into a guide for blind and low vision users across Pakistan.",
+      "tags": ["Python", "Flask", "Gemini Vision", "Edge TTS", "SQLite", "PWA"],
+      "device": {
+        "logo": "assets/images/nigah-ai-logo.png",
+        "brandText": "NIGAH_AI",
+        "badge": "LIVE",
+        "headRight": null,
+        "sweep": true,
+        "log": [
+          { "tag": "[cam]", "text": "frame captured" },
+          { "tag": "[vision]", "text": "model inference complete" },
+          { "tag": "[match]", "text": "confidence score 0.984" },
+          { "tag": "[voice]", "text": "speech synthesized — ur-PK" }
+        ],
+        "resultText": "STATUS: VALIDATED — ",
+        "resultVal": "Confidence 98.4%"
+      },
+      "links": [
+        { "label": "Live Demo", "url": "https://nigah-ai-production.up.railway.app/", "style": "primary" },
+        { "label": "Source Code", "url": "https://github.com/jahanzaib1015/nigah-ai", "style": "ghost" }
+      ],
+      "featuredLinks": [
+        { "label": "Live Demo", "url": "https://nigah-ai-production.up.railway.app/", "style": "primary" },
+        { "label": "Source Code", "url": "https://github.com/jahanzaib1015/nigah-ai", "style": "ghost" },
+        { "label": "Full Breakdown", "url": "projects.html", "style": "ghost" }
+      ],
+      "rowLinks": [
+        { "label": "GitHub", "url": "https://github.com/jahanzaib1015/nigah-ai", "style": "ghost" }
+      ],
+      "skillGroups": [
+        {
+          "label": "What it does",
+          "items": [
+            "Medicine name + expiry scan",
+            "All 10 issued PKR denominations",
+            "Urdu voice on every result",
+            "Meri List scan history",
+            "Urgent alert for expired medicine"
+          ]
+        },
+        {
+          "label": "Reliability contract",
+          "items": [
+            "Only two outcomes: real result, or honest failure",
+            "3-tier vision failover chain",
+            "Bare strengths like \"500mg\" rejected as names",
+            "Foreign notes never called rupees",
+            "Nothing invented, nothing guessed"
+          ]
+        },
+        {
+          "label": "Tested",
+          "items": [
+            "35 medicine name parsing cases",
+            "72 offline route and parsing checks",
+            "67-image currency benchmark set",
+            "All suites passing"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "intellicharge",
+      "name": "IntelliCharge",
+      "pinned": false,
+      "priority": 50,
+      "indexLabel": "02 — Systems project",
+      "headerLogo": null,
+      "description": "A predictive electricity billing system split across two languages: a C++ engine handles tariff logic through inheritance and polymorphism, while Java drives the console workflow and runs that engine as a process, passing data back and forth through files.",
+      "featuredLabel": "Systems project",
+      "featuredTitle": "IntelliCharge",
+      "featuredTagline": "A predictive electricity billing system that models tariffs and forecasts next month's usage.",
+      "featuredDescription": "A predictive electricity billing system split across two languages: a C++ engine handles tariff logic through inheritance and polymorphism, while Java drives the console workflow and runs that engine as a process, passing data back and forth through files.",
+      "short": "A predictive electricity billing system in C++ and Java, with tariff modeling for domestic, commercial and industrial customers and next month usage prediction.",
+      "tags": ["C++", "Java", "OOP", "File Handling", "Exception Handling"],
+      "device": {
+        "logo": null,
+        "brandText": "INTELLICHARGE",
+        "badge": null,
+        "headRight": "CLI",
+        "sweep": false,
+        "log": [
+          { "tag": "[$]", "text": "./intellicharge --units 340" },
+          { "tag": "[tariff]", "text": "tier-2 schedule loaded" },
+          { "tag": "[engine]", "text": "calculation verified" },
+          { "tag": "[java]", "text": "workflow read back — OK" }
+        ],
+        "resultText": "STATUS: PREDICTED BILL READY ",
+        "resultVal": "($42.50)"
+      },
+      "links": [
+        { "label": "Source Code", "url": "https://github.com/jahanzaib1015/IntelliCharge-Pedictive-Electricity-Billing-System", "style": "primary" }
+      ],
+      "featuredLinks": null,
+      "rowLinks": [
+        { "label": "GitHub", "url": "https://github.com/jahanzaib1015/IntelliCharge-Pedictive-Electricity-Billing-System", "style": "ghost" }
+      ],
+      "skillGroups": []
+    }
+  ]
+}
