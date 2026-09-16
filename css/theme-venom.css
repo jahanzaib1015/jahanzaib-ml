@@ -1,0 +1,253 @@
+/* ============================================
+   THEME: VENOM (symbiote override)
+   Applied via html[data-theme="venom"].
+   Deep-black organic surfaces, alien-white glow,
+   periodic power-surge loops, venom cursor.
+   Colour / shadow / filter / opacity only — layouts untouched.
+   ============================================ */
+
+html[data-theme="venom"]{
+  color-scheme: dark;
+  --bg:        #000000;
+  --panel:     #0A0B0C;
+  --panel-2:   #101213;
+  --line:      rgba(232,244,238,0.07);
+  --line-2:    rgba(232,244,238,0.16);
+  --text:      #F2F4F3;
+  --text-dim:  #C7CDCA;
+  --text-dim2: #9AA1A0;
+
+  /* alien-white replaces the red accent; deep blood-red kept as secondary */
+  --teal:      #E8F4EE;
+  --teal-dim:  #9FB8AE;
+  --violet:    #10312B;
+  --cyan:      #E8F4EE;
+
+  /* DNA loader accents (Venom: blood-red primary, alien-white secondary) */
+  --dna-accent:   #FF3B2E;
+  --dna-accent-2: #E8F4EE;
+
+  /* periodic power-pulse palette (organic alien-white bloom) */
+  --pulse-line:   rgba(232,244,238,0.55);
+  --pulse-glow:   rgba(232,244,238,0.20);
+  --pulse-in:     rgba(232,244,238,0.07);
+  --pulse-streak: rgba(8,18,14,0.22);
+}
+
+/* ---- venom cursor everywhere ---- */
+html[data-theme="venom"],
+html[data-theme="venom"] body{
+  cursor: url('../assets/cursors/venom-cursor.png') 2 2, auto;
+}
+html[data-theme="venom"] a,
+html[data-theme="venom"] button,
+html[data-theme="venom"] [role="button"],
+html[data-theme="venom"] input,
+html[data-theme="venom"] textarea,
+html[data-theme="venom"] select,
+html[data-theme="venom"] .btn,
+html[data-theme="venom"] .photo-card,
+html[data-theme="venom"] .tilt-card{
+  cursor: url('../assets/cursors/venom-cursor.png') 2 2, pointer;
+}
+
+/* ---- organic ground glow (replaces the red/violet wash) ---- */
+html[data-theme="venom"] body::after{
+  background:
+    radial-gradient(60% 45% at 50% 0%, rgba(232,244,238,0.05), transparent 70%),
+    radial-gradient(45% 40% at 85% 80%, rgba(0,0,0,0.9), transparent 70%);
+}
+html[data-theme="venom"] header.nav{
+  background: rgba(0,0,0,0.82);
+  border-bottom-color: rgba(232,244,238,0.10);
+}
+
+/* ---- toggle reads "active" in venom ---- */
+html[data-theme="venom"] .theme-toggle{
+  color: var(--teal);
+  border-color: rgba(232,244,238,0.35);
+  background: rgba(232,244,238,0.04);
+}
+html[data-theme="venom"] .theme-toggle .tt-track{
+  background: #000;
+  border-color: rgba(232,244,238,0.30);
+}
+html[data-theme="venom"] .theme-toggle .tt-thumb{
+  background: #E8F4EE;
+  box-shadow: 0 0 8px rgba(232,244,238,0.8);
+  transform: translateX(16px);
+}
+
+/* ---- hero wireframe + cinematic canvas -> desaturated symbiote palette ---- */
+html[data-theme="venom"] #hero-canvas{
+  filter: grayscale(1) brightness(1.25) opacity(0.85);
+}
+html[data-theme="venom"] #cinema-canvas{
+  filter: grayscale(1);
+}
+
+/* ---- identity reveal: the symbiote portrait becomes the card base visual ---- */
+.photo-card .venom-photo{
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s var(--ease);
+}
+.photo-card .base-photo{
+  transition: opacity 0.25s var(--ease);
+}
+html[data-theme="venom"] .photo-card .venom-photo{ opacity: 1; }
+html[data-theme="venom"] .photo-card .base-photo{ opacity: 0; }
+/* Venom spotlight reveal: ven-Profile pic.png instead of the dark-mode portrait */
+html[data-theme="venom"] .photo-card .spot-photo--dark{ display: none; }
+html[data-theme="venom"] .photo-card .spot-photo--venom{ display: block; }
+
+/* ---- scan / reticle / visor accents -> alien white ---- */
+html[data-theme="venom"] .photo-card .face{
+  border-color: rgba(232,244,238,0.28);
+}
+html[data-theme="venom"] .photo-card .scanline{
+  background: linear-gradient(90deg, transparent, rgba(232,244,238,0.85), transparent);
+  box-shadow: 0 0 12px rgba(232,244,238,0.5);
+}
+html[data-theme="venom"] .visor,
+html[data-theme="venom"] .visor span{
+  color: #E8F4EE;
+  border-color: rgba(232,244,238,0.4);
+}
+html[data-theme="venom"] .visor::before{
+  border-color: rgba(232,244,238,0.7);
+}
+html[data-theme="venom"] .visor::after{
+  background: linear-gradient(180deg, transparent, rgba(232,244,238,0.22), transparent);
+}
+html[data-theme="venom"] .reticle::before,
+html[data-theme="venom"] .reticle::after{
+  border-color: rgba(232,244,238,0.7);
+}
+html[data-theme="venom"] .nav-status .led{
+  background: #E8F4EE;
+  box-shadow: 0 0 8px rgba(232,244,238,0.9);
+}
+html[data-theme="venom"] .brand .dot{
+  color: #FF4438;
+  text-shadow: 0 0 12px rgba(255,68,56,0.95), 0 0 4px rgba(255,120,110,0.7);
+}
+html[data-theme="venom"] .nav-links a.active{ color: #E8F4EE; }
+html[data-theme="venom"] .nav-links a.active::before,
+html[data-theme="venom"] .nav-links a.active::after{ color: #9FB8AE; }
+
+/* ---- cards / panels: deep organic black + faint alien rim ---- */
+html[data-theme="venom"] .feature-card,
+html[data-theme="venom"] .tilt-card,
+html[data-theme="venom"] .device,
+html[data-theme="venom"] .skill-group,
+html[data-theme="venom"] .photo-card,
+html[data-theme="venom"] .avatar,
+html[data-theme="venom"] .tl-item{
+  border-color: rgba(232,244,238,0.14);
+  box-shadow:
+    0 0 0 1px rgba(0,0,0,0.7),
+    0 10px 40px rgba(0,0,0,0.8),
+    inset 0 0 60px rgba(0,0,0,0.65);
+}
+html[data-theme="venom"] .btn-primary{
+  background: #E8F4EE;
+  color: #000;
+  box-shadow: 0 0 22px rgba(232,244,238,0.25);
+}
+html[data-theme="venom"] .btn-ghost{
+  border-color: rgba(232,244,238,0.35);
+  color: #E8F4EE;
+}
+html[data-theme="venom"] .skill-name{
+  color: #CFE8DD;
+}
+html[data-theme="venom"] .skill-bar{
+  background: rgba(232,244,238,0.06);
+  border-color: rgba(232,244,238,0.18);
+}
+html[data-theme="venom"] .avatar::before,
+html[data-theme="venom"] .avatar::after{
+  border-color: rgba(232,244,238,0.7);
+}
+
+/* Periodic power pulses are defined once in theme-dark.css and recoloured
+   here via the --pulse-* variables (selective: CTA buttons + card borders). */
+
+/* ---- readability: crisp light type with a faint alien glow (Venom only) ---- */
+html[data-theme="venom"] h1,
+html[data-theme="venom"] h2,
+html[data-theme="venom"] h3,
+html[data-theme="venom"] h4,
+html[data-theme="venom"] .role,
+html[data-theme="venom"] .tagline,
+html[data-theme="venom"] .section-sub{
+  text-shadow: 0 0 18px rgba(232,244,238,0.22), 0 1px 2px rgba(0,0,0,0.85);
+}
+html[data-theme="venom"] .readout{ color: #DDE3E0; }
+html[data-theme="venom"] .readout span{ color: #9AA1A0; }
+html[data-theme="venom"] .readout > div{
+  text-shadow: 0 0 12px rgba(232,244,238,0.18);
+}
+html[data-theme="venom"] .btn-ghost{
+  text-shadow: 0 0 12px rgba(232,244,238,0.35);
+}
+html[data-theme="venom"] .btn-primary{
+  text-shadow: none;
+}
+/* ---- small labels / captions / tags: crisp white + neon-cyan glow so they
+       read as prominently in Venom as the red labels do in Spider-Man mode ---- */
+html[data-theme="venom"] .mono-label{
+  color: #EAF4EF;
+  text-shadow: 0 0 12px rgba(110,247,230,0.55), 0 0 3px rgba(232,244,238,0.7), 0 1px 2px rgba(0,0,0,0.9);
+}
+html[data-theme="venom"] .mono-label::before{
+  background: #6FF7E6;
+  box-shadow: 0 0 10px rgba(110,247,230,0.9), 0 0 4px rgba(232,244,238,0.8);
+}
+/* the "OBJECT: NEURAL_NETWORK.OBJ" hero caption — was var(--violet), near-black on black */
+html[data-theme="venom"] .hero-stage .scan-target-label{
+  color: #7CFFEA;
+  text-shadow: 0 0 12px rgba(110,247,230,0.7), 0 1px 3px rgba(0,0,0,0.95);
+}
+html[data-theme="venom"] .tag{
+  color: #E6EDE9;
+  border-color: rgba(232,244,238,0.34);
+  text-shadow: 0 0 8px rgba(232,244,238,0.25);
+}
+html[data-theme="venom"] .tag--core{
+  color: var(--dna-accent);
+  font-weight: 600;
+  border-color: color-mix(in srgb, var(--dna-accent) 55%, transparent);
+  background: color-mix(in srgb, var(--dna-accent) 12%, transparent);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--dna-accent) 30%, transparent);
+  text-shadow: 0 0 10px color-mix(in srgb, var(--dna-accent) 45%, transparent);
+}
+html[data-theme="venom"] .tag-sub{
+  color: #D6DEDA;
+  opacity: 1;
+  text-shadow: 0 0 8px rgba(232,244,238,0.2);
+}
+html[data-theme="venom"] .readout span{ color: #C7D2CC; }
+html[data-theme="venom"] .tl-meta{ color: #C7D2CC; text-shadow: 0 0 8px rgba(232,244,238,0.18); }
+
+/* ---- header identity: brand mark is theme-reactive (styled in styles.css); wordmark goes alien-white ---- */
+html[data-theme="venom"] .brand{
+  color: #F2F4F3;
+  text-shadow: 0 0 14px rgba(232,244,238,0.35);
+}
+
+/* ---- card-back MJA monogram -> symbiote palette ---- */
+html[data-theme="venom"] .mja-card #mja-bg stop:first-child{ stop-color: #0B0F0D; }
+html[data-theme="venom"] .mja-card #mja-bg stop:last-child{ stop-color: #010202; }
+html[data-theme="venom"] .mja-card #mja-ring stop:first-child{ stop-color: #E8F4EE; }
+html[data-theme="venom"] .mja-card #mja-ring stop:last-child{ stop-color: #E62429; }
+html[data-theme="venom"] .mja-card g[opacity="0.55"]{ stroke: #2E3B36; }
+html[data-theme="venom"] .mja-card g[opacity="0.8"]{ fill: #3A4A44; }
+html[data-theme="venom"] .mja-card text{ fill: #F2F4F3; }
