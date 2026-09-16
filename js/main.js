@@ -667,8 +667,8 @@ window.addEventListener('DOMContentLoaded', () => { window.__initReveals(documen
   const PAGE = { '': 'index', 'index.html': 'index', 'about.html': 'about', 'projects.html': 'projects', 'contact.html': 'contact' };
   const page = () => { const b = location.pathname.split('/').pop(); return PAGE[b] || 'index'; };
   const reduce = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
-  const GAP = 15000;          // strict gap between performers
-  const TRAVEL_MS = 2200;     // canvas web-shot traversal duration (+ margin)
+  const TRAVEL_MS = 2600;     // canvas web-shot traversal duration (+ margin over the 2200ms swing)
+  const gap = () => 15000 + Math.random() * 5000;   // strict 15–20s gap between performers
   // [id, duration ms] — each entry is a single one-shot appearance
   const CAST = {
     dark:  { index:    [['fly', 6000], ['hang', 7000]],
@@ -696,10 +696,10 @@ window.addEventListener('DOMContentLoaded', () => { window.__initReveals(documen
     const p = performers[idx % performers.length]; idx++;
     if (p.kind === 'travel'){
       if (typeof window.__cineTravelOnce === 'function') window.__cineTravelOnce();
-      wait(TRAVEL_MS + GAP, runSlot);
+      wait(TRAVEL_MS + gap(), runSlot);
     } else {
       p.el.classList.add('is-on');
-      wait(p.dur, () => { p.el.classList.remove('is-on'); wait(GAP, runSlot); });
+      wait(p.dur, () => { p.el.classList.remove('is-on'); wait(gap(), runSlot); });
     }
   }
 
