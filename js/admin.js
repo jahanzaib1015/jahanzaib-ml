@@ -37,7 +37,7 @@
   var API = window.__projectsAPI;
   if (!API) return;
 
-  var DEFAULT_PASS_HASH = '1938d18f8adceb3a2edccb9d24b74f7e30e00ed6c8490e61062a870b32c42a8a';
+  var DEFAULT_PASS_HASH = '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9';
   var PASS_KEY = 'mja-admin-passhash';
   var RECOVERY_KEY = 'mja-admin-recovery';   // SHA-256 of the owner's recovery seed
   var UNLOCK_KEY = 'mja-admin-unlocked';
