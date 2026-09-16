@@ -571,58 +571,52 @@ window.addEventListener('DOMContentLoaded', () => { window.__initReveals(documen
     }
     ctx.globalAlpha = 1;
 
-    // Background traveller: ONE clean web-shot across the middle viewport. The
-    // character throws a single web to a fixed anchor dead-centre above the screen
-    // and swings in one smooth pendulum arc from one edge of the central band to
-    // the other — no multi-swing re-shoot, no stutter. Direction is theme-locked:
-    // Spider-Man right→left, Venom left→right.
+    // Background traveller: ONE cinematic web-swing that enters from OFF-SCREEN, arcs
+    // across the viewport on a realistic pendulum trajectory (a hero swinging between
+    // buildings), and exits OFF-SCREEN on the far side. Because the swing's slow apexes
+    // now happen beyond the screen edges, there is no static on-screen hang or fade-in.
+    // The web runs taut from the hero's hand to a fixed anchor far off-screen above.
+    // Direction is theme-locked: Spider-Man right→left, Venom left→right.
     if (!manualTravel && !travel && now >= T.travel) travel = { t0: now };
     if (travel){
       const venom = window.__venomMode();
       const dir = venom ? 1 : -1;                        // +1 left→right (Venom), -1 right→left (Spider-Man)
       const sp = themeSprite();
-      const span  = 0.50 * W;                            // traverse only the central half
-      const thMax = 0.42;                                // fixed moderate swing angle (radians)
-      const L     = (span / 2) / Math.sin(thMax);        // web length so the sweep equals span
-      const midY  = 0.45 * H;                            // arc's low point sits at mid-height
-      const Ay    = midY - L;                            // web anchor, off-screen above
-      const Ax    = W * 0.5;                             // anchor centred → single web-shot into the middle
-      const DU    = 1800;                                // one cinematic pass
+      const margin = Math.max(160, W * 0.12);            // arc endpoints land fully off-screen
+      const thMax = 0.60;                                // swing amplitude (radians)
+      const L     = (W / 2 + margin) / Math.sin(thMax);  // web length so the sweep reaches past both edges
+      const midY  = 0.50 * H;                            // arc's low point sits at mid-height
+      const Ay    = midY - L;                            // web anchor, far off-screen above
+      const Ax    = W * 0.5;                             // anchor centred → web fans through the middle
+      const DU    = 2200;                                // one cinematic off-screen→off-screen pass
       const e = now - travel.t0;
       if (e < DU && sp){
         const tau = e / DU;                                   // 0..1 across the single swing
-        const th = -dir * thMax * Math.cos(Math.PI * tau);    // pendulum SHM: slow at the ends, swift mid
+        const th = -dir * thMax * Math.cos(Math.PI * tau);    // pendulum SHM: swift mid, slow (off-screen) ends
         const x = Ax + L * Math.sin(th);
         const y = Ay + L * Math.cos(th);
         const baseH = Math.min(H * 0.10, 104);                // small, subtle, never blocks text
         const depth = 1 + 0.06 * Math.cos(th);
         const hgt = baseH * depth;
-        let fade = 1;                                         // smooth appear + vanish envelope
-        if (tau < 0.12) fade = tau / 0.12;
-        else if (tau > 0.86) fade = Math.max(0, (1 - tau) / 0.14);
-        ctx.globalAlpha = travelAlpha() * fade;
-        let attach = 1;                                       // web shoots out, stays taut, releases
-        if (tau < 0.12) attach = tau / 0.12;
-        else if (tau > 0.86) attach = Math.max(0, (1 - tau) / 0.14);
-        if (attach > 0.02){
-          const gx = x, gy = y - hgt * 0.42;                  // grip near the sprite's top
-          const ax = gx + (Ax - gx) * attach;
-          const ay = gy + (Ay - gy) * attach;
-          if (venom){
-            symbioteStrand(gx, gy, ax, ay, th * 3, 2.6);      // black symbiote tendril web
-          } else {
-            const g = ctx.createLinearGradient(gx, gy, ax, ay);
-            g.addColorStop(0, 'rgba(225,248,255,0.95)');
-            g.addColorStop(1, 'rgba(20,232,200,0.06)');
-            ctx.strokeStyle = g;
-            ctx.lineWidth = 1.1;
-            ctx.shadowColor = 'rgba(20,232,200,0.7)';
-            ctx.shadowBlur = 8;
-            ctx.beginPath(); ctx.moveTo(gx, gy); ctx.lineTo(ax, ay); ctx.stroke();
-            ctx.shadowBlur = 0;
-          }
+        ctx.globalAlpha = travelAlpha();                      // off-screen at both ends → no fade needed
+        const gx = x, gy = y - hgt * 0.42;                    // grip near the sprite's top (the hand)
+        if (venom){
+          symbioteStrand(gx, gy, Ax, Ay, th * 3, 2.6);        // Venom keeps its black symbiote tendril
+        } else {
+          ctx.save();                                          // Spider-Man: pure-white glowing web line
+          ctx.lineCap = 'round';
+          ctx.strokeStyle = 'rgba(255,255,255,0.9)';
+          ctx.lineWidth = 2.0;
+          ctx.shadowColor = 'rgba(255,255,255,0.95)';
+          ctx.shadowBlur = 16;
+          ctx.beginPath(); ctx.moveTo(gx, gy); ctx.lineTo(Ax, Ay); ctx.stroke();
+          ctx.shadowBlur = 0;                                  // crisp #ffffff core over the glow
+          ctx.strokeStyle = '#ffffff';
+          ctx.lineWidth = 1.0;
+          ctx.beginPath(); ctx.moveTo(gx, gy); ctx.lineTo(Ax, Ay); ctx.stroke();
+          ctx.restore();
         }
-        drawSprite(sp, x, y, hgt, 1, 1, th * 0.45);           // lean into the swing
+        drawSprite(sp, x, y, hgt, 1, 1, th * 0.5);            // lean into the swing
         ctx.globalAlpha = 1;
       } else if (e >= DU){
         travel = null;
