@@ -102,6 +102,13 @@ button{ font-family: inherit; }
   .wrap{ padding: 0 20px; }
 }
 
+/* Ultrawide/large-desktop refinement: give the centered container more room on
+   very large monitors so the layout doesn't float in a narrow column. Safe for
+   readability because body text is ch-capped and grids are fr-based. */
+@media (min-width: 1600px){
+  :root{ --container: 1280px; }
+}
+
 /* ---------- typography ---------- */
 h1,h2,h3{
   font-family: var(--font-display);
