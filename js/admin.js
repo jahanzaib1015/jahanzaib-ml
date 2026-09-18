@@ -136,7 +136,7 @@
       + 'background:rgba(2,4,8,.72);backdrop-filter:blur(6px);font:14px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#dfe7ee;}'
       + '.mjadmin-panel{width:min(940px,94vw);max-height:90vh;overflow:auto;background:#0b0f16;border:1px solid rgba(20,232,200,.28);'
       + 'border-radius:12px;box-shadow:0 24px 80px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.03) inset;}'
-      + '.mjadmin-head{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid rgba(255,255,255,.08);position:sticky;top:0;background:#0b0f16;z-index:2;}'
+      + '.mjadmin-head{display:flex;align-items:center;flex-wrap:wrap;gap:8px 12px;padding:14px 18px;border-bottom:1px solid rgba(255,255,255,.08);position:sticky;top:0;background:#0b0f16;z-index:2;}'
       + '.mjadmin-head h2{margin:0;font-size:14px;letter-spacing:.14em;color:#14e8c8;text-transform:uppercase;}'
       + '.mjadmin-head .sp{flex:1;}'
       + '.mjadmin-body{padding:16px 18px;}'
@@ -148,7 +148,7 @@
       + '.mjadmin-btn.ghost{border-color:rgba(255,255,255,.18);background:transparent;color:#cdd6de;}'
       + '.mjadmin-btn.danger{border-color:rgba(255,80,80,.45);background:rgba(255,60,60,.12);color:#ffd6d6;}'
       + '.mjadmin-btn.x{padding:4px 9px;line-height:1;}'
-      + '.mjadmin-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid rgba(255,255,255,.08);'
+      + '.mjadmin-row{display:flex;align-items:center;flex-wrap:wrap;gap:10px;padding:10px 12px;border:1px solid rgba(255,255,255,.08);'
       + 'border-radius:10px;margin-bottom:8px;background:rgba(255,255,255,.02);}'
       + '.mjadmin-row .nm{font-weight:600;color:#eaf2f6;}'
       + '.mjadmin-row .id{font-size:11px;color:#7f8b95;}'
@@ -182,6 +182,9 @@
       + 'color:#c8fff4;border-radius:8px;padding:7px 12px;font:inherit;font-size:12.5px;margin-right:10px;}'
       + '.mjadmin-file::file-selector-button:hover{background:rgba(20,232,200,.2);}'
       + '.mjadmin-btn:disabled{opacity:.4;cursor:not-allowed;}'
+      + '@media(max-width:600px){.mjadmin-head{gap:8px;padding:12px 14px;}.mjadmin-head h2{font-size:12px;letter-spacing:.08em;}'
+      + '.mjadmin-body{padding:14px;}.mjadmin-btn{padding:6px 10px;font-size:11.5px;}.mjadmin-row{gap:8px;padding:10px;}'
+      + '.mjadmin-row .sp{flex:0 0 100%;height:0;margin:0;}.mjadmin-prio{width:58px;}}'
       + '@media(max-width:720px){.mjadmin-grid{grid-template-columns:1fr;}}';
     document.head.appendChild(el('style', { id: 'mjadmin-style' }, css));
   }
