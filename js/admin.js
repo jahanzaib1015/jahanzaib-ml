@@ -175,6 +175,13 @@
       + '.mjadmin-link:hover{color:#c8fff4;}'
       + '.mjadmin-seed{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:15px;letter-spacing:.06em;color:#c8fff4;'
       + 'background:#0e1a18;border:1px solid rgba(20,232,200,.4);border-radius:8px;padding:12px 14px;margin-top:10px;word-break:break-all;user-select:all;}'
+      + '.mjadmin-resume{margin-top:22px;border-top:1px solid rgba(255,255,255,.08);padding-top:4px;}'
+      + '.mjadmin-subhead{margin:14px 0 6px;font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;color:#14e8c8;}'
+      + '.mjadmin-file{font:inherit;font-size:12.5px;color:#cdd6de;width:100%;}'
+      + '.mjadmin-file::file-selector-button{cursor:pointer;border:1px solid rgba(20,232,200,.4);background:rgba(20,232,200,.1);'
+      + 'color:#c8fff4;border-radius:8px;padding:7px 12px;font:inherit;font-size:12.5px;margin-right:10px;}'
+      + '.mjadmin-file::file-selector-button:hover{background:rgba(20,232,200,.2);}'
+      + '.mjadmin-btn:disabled{opacity:.4;cursor:not-allowed;}'
       + '@media(max-width:720px){.mjadmin-grid{grid-template-columns:1fr;}}';
     document.head.appendChild(el('style', { id: 'mjadmin-style' }, css));
   }
@@ -308,6 +315,7 @@
     body.appendChild(listWrap);
     var editorWrap = el('div', { id: 'mjadmin-editor' });
     body.appendChild(editorWrap);
+    buildResumeSection(body);
     panel.appendChild(body);
     root.appendChild(panel);
     document.body.appendChild(root);
@@ -466,6 +474,77 @@
       device: { logo: null, brandText: 'NEW_PROJECT', badge: null, headRight: null, sweep: false, log: [{ tag: '[init]', text: 'project bootstrapped' }], resultText: 'STATUS: ', resultVal: '' },
       links: [], featuredLinks: null, rowLinks: [], skillGroups: []
     };
+  }
+
+  // ---- resume management (CV upload) ---------------------------------
+  // Owner-only section inside the console, backed by the shared js/resume.js
+  // module (window.__resume). An upload is stored in ONE localStorage key, so a
+  // new file atomically REPLACES the previous one — old versions never pile up.
+  // "Export resume.pdf" downloads the active file so the owner can commit it to
+  // the canonical assets/resume.pdf path to publish it for all visitors.
+  function buildResumeSection(parent) {
+    var box = el('div', { class: 'mjadmin-resume' });
+    box.appendChild(el('h3', { class: 'mjadmin-subhead' }, 'Resume / CV'));
+
+    var R = window.__resume;
+    if (!R) {
+      box.appendChild(el('p', { class: 'mjadmin-hint' },
+        'Resume module (js/resume.js) is not loaded on this page, so CV management is unavailable here.'));
+      parent.appendChild(box);
+      return;
+    }
+
+    box.appendChild(el('p', { class: 'mjadmin-note' },
+      'Upload a PDF to preview it instantly in this browser — a new upload <b>replaces</b> the old one automatically. '
+      + 'To publish for all visitors, <b>Export resume.pdf</b> and save it as <code>assets/resume.pdf</code>.'));
+
+    var rStatus = el('p', { class: 'mjadmin-pinstatus' });
+    box.appendChild(rStatus);
+
+    var fileRow = el('div', { class: 'mjadmin-row' });
+    var fileIn = el('input', { class: 'mjadmin-file', type: 'file', accept: 'application/pdf,.pdf' });
+    fileRow.appendChild(fileIn);
+    box.appendChild(fileRow);
+
+    var rErr = el('p', { class: 'mjadmin-hint', style: 'color:#ff9a9a;min-height:16px;' }, '');
+    box.appendChild(rErr);
+
+    var rActions = el('div', { style: 'display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;' });
+    var bRExp = el('button', { class: 'mjadmin-btn ghost' }, 'Export resume.pdf');
+    var bRClr = el('button', { class: 'mjadmin-btn danger' }, 'Remove uploaded');
+    rActions.appendChild(bRExp); rActions.appendChild(bRClr);
+    box.appendChild(rActions);
+
+    function paintStatus() {
+      var a = R.getActive();
+      rStatus.textContent = R.statusText(a);
+      var hasLocal = a.source === 'local';
+      bRExp.disabled = !hasLocal;
+      bRClr.disabled = !hasLocal;
+    }
+
+    fileIn.addEventListener('change', function () {
+      var f = fileIn.files && fileIn.files[0];
+      rErr.textContent = '';
+      if (!f) return;
+      R.setFromFile(f).then(function () {
+        fileIn.value = '';
+        paintStatus();
+        toast('Resume updated (local preview). Export to publish.');
+      }).catch(function (e) { rErr.textContent = String(e.message || e); fileIn.value = ''; });
+    });
+    bRExp.addEventListener('click', function () {
+      if (R.downloadActive()) toast('resume.pdf downloaded — save it as assets/resume.pdf to publish.');
+    });
+    bRClr.addEventListener('click', function () {
+      if (!confirm('Remove the uploaded resume from this browser? The published assets/resume.pdf (if any) is unaffected.')) return;
+      R.clear();
+      paintStatus();
+      toast('Uploaded resume removed.');
+    });
+
+    paintStatus();
+    parent.appendChild(box);
   }
 
   // ---- password change (themed modal) --------------------------------
