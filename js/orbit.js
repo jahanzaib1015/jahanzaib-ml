@@ -64,10 +64,11 @@
     }
 
     // ---- orbital engine: continuous curved revolution around the empty hub ----
+    var reduce = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
     var R = radius(stage);
     var angle = 0;            // ring rotation, degrees [0,360)
     var vel = 0;              // current angular velocity, deg/sec
-    var AUTO = 16;            // cruise velocity (one full orbit ~22.5s)
+    var AUTO = reduce ? 0 : 16;   // cruise velocity (one full orbit ~22.5s); 0 under reduced-motion
     var running = false;
     var last = 0;
     var front = -1;
@@ -79,7 +80,14 @@
     var LIFT = 46;            // px the focused card floats toward the viewer
     for (var fi = 0; fi < N; fi++) flatten.push(0);
 
-    function stopped() { return Math.abs(vel) < 0.6; }
+    // manual navigation state (one-card eased tweens + idle auto-resume)
+    var tween = { active: false, from: 0, to: 0, t: 0, dur: 0.6 };
+    var idle = 0;             // seconds parked on a landed card before auto-resume
+    var RESUME_DELAY = 4;     // s
+    function norm360(v) { return ((v % 360) + 360) % 360; }
+    function easeInOut(x) { return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; }
+
+    function stopped() { return tween.active || Math.abs(vel) < 0.6; }
     function focusIdx() {
       if (hoverIdx >= 0) return hoverIdx;
       return stopped() ? front : -1;
@@ -119,11 +127,20 @@
     // Advance the simulation by dt seconds. Kept separate from rAF so it can be
     // driven deterministically (tests) and paused/resumed without side effects.
     function step(dt) {
-      var targetVel = paused ? 0 : AUTO;
-      vel += (targetVel - vel) * Math.min(1, dt * 2.2);   // smooth ramp / smooth resume
-      angle += vel * dt;
-      if (angle >= 360) angle -= 360; else if (angle < 0) angle += 360;
-      var focus = focusIdx(), k = Math.min(1, dt * 7);     // curve<->straight easing
+      if (tween.active) {
+        tween.t = Math.min(1, tween.t + dt / tween.dur);
+        angle = norm360(tween.from + (tween.to - tween.from) * easeInOut(tween.t));
+        if (tween.t >= 1) { tween.active = false; idle = 0; }
+      } else {
+        var targetVel = paused ? 0 : AUTO;
+        vel += (targetVel - vel) * Math.min(1, dt * 2.2);   // smooth ramp / smooth resume
+        angle = norm360(angle + vel * dt);
+        if (paused && hoverIdx < 0 && !reduce) {             // parked after a manual step
+          idle += dt;
+          if (idle > RESUME_DELAY) { paused = false; idle = 0; }
+        }
+      }
+      var focus = focusIdx(), k = Math.min(1, dt * 7);       // curve<->straight easing
       for (var i = 0; i < N; i++) {
         var t = (i === focus) ? 1 : 0;
         flatten[i] += (t - flatten[i]) * k;
@@ -131,6 +148,27 @@
       }
       layout();
     }
+
+    // ---- manual navigation: one-card eased tweens that park the orbit to read ----
+    function go(delta) {
+      tween.active = true;
+      tween.from = angle;
+      tween.to = angle + delta;
+      tween.t = 0;
+      tween.dur = reduce ? 0.001 : 0.6;
+      paused = true; vel = 0; idle = 0;
+      layout();
+    }
+    function landIndex(target, preferDir) {
+      var desired = norm360(-target * STEP);
+      var d = norm(desired - angle);
+      if (preferDir < 0 && d > 0) d -= 360;   // next: rotate the "forward" way
+      if (preferDir > 0 && d < 0) d += 360;   // prev: rotate the "backward" way
+      go(d);
+    }
+    function next() { landIndex((front + 1 + N) % N, -1); }
+    function prev() { landIndex((front - 1 + N) % N, 1); }
+    function goToIndex(i) { landIndex(((i % N) + N) % N, 0); }
 
     function frame(now) {
       if (!running) return;
@@ -143,22 +181,40 @@
     function start() { if (!running) { running = true; last = 0; requestAnimationFrame(frame); } }
     function stop() { running = false; }
 
-    // hover-to-pause: cursor over a card stops the orbit instantly and straightens
-    // that card flat for reading; leaving resumes the curved flow smoothly.
+    // hover-to-pause (mouse only): cursor over a card stops the orbit instantly and
+    // straightens that card flat for reading; leaving resumes the curved flow smoothly.
+    // Touch never fires mouseenter/leave, so taps can't leave the orbit stuck paused.
     function pauseOn(i) {
       return function () { hoverIdx = i; paused = true; vel = 0; layout(); };
     }
     function pauseOff() {
-      hoverIdx = -1; paused = false;
+      hoverIdx = -1; paused = false; idle = 0;
       if (!running) layout();   // keep flatten easing while off-screen/manual
       else start();
     }
     cards.forEach(function (c, i) {
-      c.addEventListener('pointerenter', pauseOn(i));
-      c.addEventListener('pointerleave', pauseOff);
       c.addEventListener('mouseenter', pauseOn(i));
       c.addEventListener('mouseleave', pauseOff);
     });
+
+    // ---- manual controls: prev/next buttons, dots, click-to-front, touch swipe ----
+    var prevBtn = root.querySelector('[data-orbit-prev]');
+    var nextBtn = root.querySelector('[data-orbit-next]');
+    if (prevBtn) prevBtn.addEventListener('click', prev);
+    if (nextBtn) nextBtn.addEventListener('click', next);
+    dots.forEach(function (d, i) { d.addEventListener('click', function () { goToIndex(i); }); });
+    cards.forEach(function (c, i) { c.addEventListener('click', function () { goToIndex(i); }); });
+
+    var tx = 0, ty = 0, tracking = false;
+    stage.addEventListener('touchstart', function (e) {
+      var t = e.changedTouches[0]; tx = t.clientX; ty = t.clientY; tracking = true;
+    }, { passive: true });
+    stage.addEventListener('touchend', function (e) {
+      if (!tracking) return; tracking = false;
+      var t = e.changedTouches[0];
+      var dx = t.clientX - tx, dy = t.clientY - ty;
+      if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) { if (dx < 0) next(); else prev(); }
+    }, { passive: true });
 
     layout();
     window.addEventListener('resize', layout);
@@ -185,7 +241,9 @@
       flatten: flatten,
       hover: function (i) { if (i >= 0) pauseOn(i)(); else pauseOff(); },
       isPaused: function () { return paused; },
-      focus: focusIdx
+      focus: focusIdx,
+      next: next, prev: prev, goToIndex: goToIndex,
+      tweening: function () { return tween.active; }
     };
     return api;
   }

@@ -890,6 +890,7 @@ section{ padding: 64px 0; position: relative; }
   box-shadow:
     0 18px 50px -18px rgba(0,0,0,0.82),
     0 0 26px color-mix(in srgb, var(--orbit-accent) 26%, transparent);
+  cursor: pointer;
   backface-visibility: hidden;
   will-change: transform, opacity;
   transition: border-color 0.3s var(--ease), box-shadow 0.3s var(--ease);
