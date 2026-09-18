@@ -230,6 +230,28 @@ header.nav .wrap{
 .nav-links a.active::before{ content: "[ "; color: var(--teal-dim); }
 .nav-links a.active::after{ content: " ]"; color: var(--teal-dim); }
 
+.nav-links a.nav-resume{
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-left: 6px;
+  padding: 7px 14px;
+  border: 1px solid var(--line-2);
+  border-radius: 3px;
+  color: var(--teal);
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  transition: color 0.25s var(--ease), background 0.25s var(--ease), border-color 0.25s var(--ease), box-shadow 0.25s var(--ease);
+}
+.nav-links a.nav-resume:hover{
+  color: var(--teal);
+  background: var(--panel);
+  border-color: var(--teal);
+  box-shadow: 0 0 18px rgba(20,232,200,0.22);
+}
+.nav-links a.nav-resume .nav-resume-ico{ flex: none; }
+.nav-links a.nav-resume[hidden]{ display: none; }
+
 .nav-status{
   font-family: var(--font-mono);
   font-size: 0.72rem;
@@ -264,6 +286,7 @@ header.nav .wrap{
     padding: 12px;
     border-bottom: 1px solid var(--line);
   }
+  header.nav.open .nav-links a.nav-resume{ margin: 8px 0 0; }
 }
 
 /* ---------- hero ---------- */
