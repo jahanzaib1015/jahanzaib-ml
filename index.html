@@ -130,21 +130,14 @@
       <span class="mono-label reveal">Engineering Foundations</span>
       <h2 class="section-title reveal" style="margin-top:14px;">Core competencies</h2>
       <p class="section-sub reveal">The core pillars behind everything I build — <strong>Artificial Intelligence</strong>, <strong>Machine Learning</strong>, <strong>Deep Learning</strong>, and <strong>Computer Vision</strong>, on a solid computer-science foundation.</p>
-      <div class="foundations">
-        <div class="pillar reveal">
-          <div class="pillar-badge">AI / ML</div>
-          <h3>Artificial Intelligence &amp; Machine Learning</h3>
-          <p>Predictive modeling, statistical learning, training pipelines, and intelligent system architecture.</p>
+      <div class="orbit reveal" id="core-orbit" data-orbit>
+        <div class="orbit-stage" data-orbit-stage>
+          <div class="orbit-ring" data-orbit-ring></div>
         </div>
-        <div class="pillar reveal">
-          <div class="pillar-badge">DL</div>
-          <h3>Deep Learning &amp; Neural Networks</h3>
-          <p>Multi-layer perceptrons, CNNs, model optimization, loss functions, and tensor computations.</p>
-        </div>
-        <div class="pillar reveal">
-          <div class="pillar-badge">CV</div>
-          <h3>Computer Vision</h3>
-          <p>Image processing, feature extraction, object detection, and visual data perception pipelines.</p>
+        <div class="orbit-controls">
+          <button class="orbit-btn" type="button" data-orbit-prev aria-label="Previous skill">&#8249;</button>
+          <div class="orbit-dots" data-orbit-dots></div>
+          <button class="orbit-btn" type="button" data-orbit-next aria-label="Next skill">&#8250;</button>
         </div>
       </div>
     </div>
@@ -260,6 +253,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="js/scene.js"></script>
 <script src="js/resume.js"></script>
+<script src="js/orbit.js"></script>
 <script src="js/main.js"></script>
 <script src="js/projects.js"></script>
 </body>

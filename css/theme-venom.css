@@ -23,6 +23,9 @@ html[data-theme="venom"]{
   --violet:    #10312B;
   --cyan:      #E8F4EE;
 
+  /* orbital skills-carousel neon accent (blood-red in the Venom theme) */
+  --orbit-accent: #FF3B2E;
+
   /* DNA loader accents (Venom: blood-red primary, alien-white secondary) */
   --dna-accent:   #FF3B2E;
   --dna-accent-2: #E8F4EE;
