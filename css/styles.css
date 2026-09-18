@@ -892,6 +892,14 @@ section{ padding: 64px 0; position: relative; }
     0 0 26px color-mix(in srgb, var(--orbit-accent) 26%, transparent);
   backface-visibility: hidden;
   will-change: transform, opacity;
+  transition: border-color 0.3s var(--ease), box-shadow 0.3s var(--ease);
+}
+.orbit-card.is-focus{
+  border-color: color-mix(in srgb, var(--orbit-accent) 92%, transparent);
+  box-shadow:
+    0 26px 60px -20px rgba(0,0,0,0.9),
+    0 0 34px color-mix(in srgb, var(--orbit-accent) 48%, transparent),
+    0 0 70px color-mix(in srgb, var(--orbit-accent) 22%, transparent);
 }
 .orbit-badge{
   display: inline-flex; align-items: center; justify-content: center;

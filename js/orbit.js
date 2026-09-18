@@ -72,17 +72,38 @@
     var last = 0;
     var front = -1;
 
+    // curve-to-straight state
+    var flatten = [];         // per-card flatten factor 0 (curved) .. 1 (flat/front)
+    var hoverIdx = -1;        // card currently under the pointer
+    var paused = false;       // hover-pause engaged
+    var LIFT = 46;            // px the focused card floats toward the viewer
+    for (var fi = 0; fi < N; fi++) flatten.push(0);
+
+    function stopped() { return Math.abs(vel) < 0.6; }
+    function focusIdx() {
+      if (hoverIdx >= 0) return hoverIdx;
+      return stopped() ? front : -1;
+    }
+
     function layout() {
       R = radius(stage);
-      var i, a, cosA, depth;
+      var focus = focusIdx();
+      var i, a, F, cosA, depth, flat, scale, op;
       for (i = 0; i < N; i++) {
         a = norm(angle + i * STEP);
+        F = flatten[i];
         cosA = Math.cos(a * Math.PI / 180);
         depth = (cosA + 1) / 2;                 // 1 at front, 0 at back
+        // curved radial placement, billboarded flat by F so a focused card faces
+        // the camera while staying at its orbital position; lift + scale to pop.
+        flat = ' rotateY(' + (-F * a).toFixed(3) + 'deg) translateZ(' + (F * LIFT).toFixed(1) + 'px)';
+        scale = F > 0.001 ? ' scale(' + (1 + 0.07 * F).toFixed(3) + ')' : '';
         cards[i].style.transform =
-          'translate(-50%,-50%) rotateY(' + a.toFixed(3) + 'deg) translateZ(' + R + 'px)';
-        cards[i].style.opacity = (0.32 + 0.68 * depth).toFixed(3);
-        cards[i].style.zIndex = String(Math.round(1000 + cosA * 500));
+          'translate(-50%,-50%) rotateY(' + a.toFixed(3) + 'deg) translateZ(' + R + 'px)' + flat + scale;
+        op = (0.32 + 0.68 * depth) + (1 - (0.32 + 0.68 * depth)) * F;  // brighten toward 1 as it flattens
+        cards[i].style.opacity = op.toFixed(3);
+        cards[i].style.zIndex = String(Math.round(1000 + cosA * 500 + F * 600));
+        cards[i].classList.toggle('is-focus', i === focus && F > 0.5);
       }
       var f = 0, best = -2;
       for (i = 0; i < N; i++) {
@@ -98,9 +119,16 @@
     // Advance the simulation by dt seconds. Kept separate from rAF so it can be
     // driven deterministically (tests) and paused/resumed without side effects.
     function step(dt) {
-      vel += (AUTO - vel) * Math.min(1, dt * 2.2);   // smooth ramp toward cruise speed
+      var targetVel = paused ? 0 : AUTO;
+      vel += (targetVel - vel) * Math.min(1, dt * 2.2);   // smooth ramp / smooth resume
       angle += vel * dt;
       if (angle >= 360) angle -= 360; else if (angle < 0) angle += 360;
+      var focus = focusIdx(), k = Math.min(1, dt * 7);     // curve<->straight easing
+      for (var i = 0; i < N; i++) {
+        var t = (i === focus) ? 1 : 0;
+        flatten[i] += (t - flatten[i]) * k;
+        if (flatten[i] < 0.001) flatten[i] = 0;
+      }
       layout();
     }
 
@@ -114,6 +142,23 @@
 
     function start() { if (!running) { running = true; last = 0; requestAnimationFrame(frame); } }
     function stop() { running = false; }
+
+    // hover-to-pause: cursor over a card stops the orbit instantly and straightens
+    // that card flat for reading; leaving resumes the curved flow smoothly.
+    function pauseOn(i) {
+      return function () { hoverIdx = i; paused = true; vel = 0; layout(); };
+    }
+    function pauseOff() {
+      hoverIdx = -1; paused = false;
+      if (!running) layout();   // keep flatten easing while off-screen/manual
+      else start();
+    }
+    cards.forEach(function (c, i) {
+      c.addEventListener('pointerenter', pauseOn(i));
+      c.addEventListener('pointerleave', pauseOff);
+      c.addEventListener('mouseenter', pauseOn(i));
+      c.addEventListener('mouseleave', pauseOff);
+    });
 
     layout();
     window.addEventListener('resize', layout);
@@ -136,7 +181,11 @@
       set angle(v) { angle = ((v % 360) + 360) % 360; layout(); },
       step: step, layout: layout, start: start, stop: stop,
       isRunning: function () { return running; },
-      front: function () { return front; }
+      front: function () { return front; },
+      flatten: flatten,
+      hover: function (i) { if (i >= 0) pauseOn(i)(); else pauseOff(); },
+      isPaused: function () { return paused; },
+      focus: focusIdx
     };
     return api;
   }
